@@ -10,6 +10,7 @@ export 'package:overscroll_pop/drag_to_pop.dart';
 //////////////////////////////////////////////////////////////////////////////
 
 enum ScrollToPopOption { start, end, both, none }
+
 enum DragToPopDirection {
   toTop,
   toBottom,
@@ -25,6 +26,7 @@ class OverscrollPop extends StatefulWidget {
   final DragToPopDirection? dragToPopDirection;
   final ScrollToPopOption scrollToPopOption;
   final double friction;
+  final VoidCallback? onPop;
 
   const OverscrollPop({
     Key? key,
@@ -33,6 +35,7 @@ class OverscrollPop extends StatefulWidget {
     this.scrollToPopOption = ScrollToPopOption.start,
     this.enable = true,
     this.friction = 1.0,
+    this.onPop,
   }) : super(key: key);
 
   @override
@@ -157,7 +160,12 @@ class _OverscrollPopState extends State<OverscrollPop>
     if (dragEndDetails != null) {
       if (dragOffset.dy.abs() >= screenSize.height / 3 ||
           dragOffset.dx.abs() >= screenSize.width / 1.8) {
-        Navigator.of(context).pop();
+        if (widget.onPop != null) {
+          widget.onPop!();
+        } else {
+          Navigator.of(context).pop();
+        }
+
         return false;
       }
 
@@ -166,7 +174,11 @@ class _OverscrollPopState extends State<OverscrollPop>
       final velocityX = velocity.dx / widget.friction / widget.friction;
 
       if (velocityY.abs() > 150.0 || velocityX.abs() > 200.0) {
-        Navigator.of(context).pop();
+        if (widget.onPop != null) {
+          widget.onPop!();
+        } else {
+          Navigator.of(context).pop();
+        }
         return false;
       }
     }
